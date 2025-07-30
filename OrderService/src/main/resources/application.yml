@@ -1,0 +1,43 @@
+spring :
+  application :
+    name : orderService
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/ecom
+    username: root
+    password: Arman@2004
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+#Mail
+  mail:
+    host: smtp.gmail.com
+    port: 587  # Use 465 for SSL
+    username: armanhaba27@gmail.com
+    password: vugb fxka wqyz mubk
+#    qkgc lebw bzpr naxj
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true  # Use true for port 587
+          # ssl:
+          #   enable: true  # Uncomment and use for port 465
+
+#Rabbitmq
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+
+server :
+  port : 8084
+
+
+

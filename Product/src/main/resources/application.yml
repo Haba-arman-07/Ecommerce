@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: Product
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/ecom
+    username: root
+    password: Arman@2004
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+server:
+  port: 8082
