@@ -2,6 +2,7 @@ package com.ecom.OrderService.utils;
 
 import com.ecom.CommonEntity.Enum.Status;
 import com.ecom.CommonEntity.entities.Cart;
+import com.ecom.CommonEntity.entities.CartItem;
 import com.ecom.CommonEntity.entities.Users;
 import com.ecom.OrderService.config.RabbitMQConfig;
 import com.ecom.OrderService.dao.MasterDao;
@@ -25,40 +26,40 @@ public class CroneJobSheduler {
     @Autowired
     private ObjectMapper mapper;
 
-    @Scheduled(cron = "*/10 * * * * *")
+    @Scheduled(cron = "0 0 */1 * * *")
     public void sendCartReminder() {
         try {
-            // Get all users who have active carts
             List<Cart> allUserCarts = masterDao.getCartRepo().findActiveUsersWithCart(Status.ACTIVE);
 
-            // Use a set to avoid sending multiple emails to the same user
             Set<Long> processedUsers = new HashSet<>();
 
             for (Cart cart : allUserCarts) {
                 Users user = cart.getUser();
 
-                // Skip if already processed
                 if (processedUsers.contains(user.getUserId())) {
                     continue;
                 }
+
                 processedUsers.add(user.getUserId());
 
-                // Get all cart items for the user
-                List<Cart> userCartList = masterDao.getCartRepo().findByUserId(user.getUserId());
+//              Fetch all cart items for this user's cart
+                List<CartItem> cartItems = masterDao.getCartItemsRepo()
+                        .findByCart_CartId(cart.getCartId());
 
-                // Prepare product list
-                List<Map<String, Object>> productList = new ArrayList<>();
-                for (Cart userCart : userCartList) {
-                    Map<String, Object> productMap = Map.of(
-                            "Image", userCart.getProduct().getImageUrl(),
-                            "productName", userCart.getProduct().getProductName(),
-                            "Quantity", userCart.getQuantity(),
-                            "Price", userCart.getPrice()
+//                List<Cart> userCartList = masterDao.getCartRepo().findByUserId(user.getUserId());
+
+                List<Map<String, String>> productList = new ArrayList<>();
+                for (CartItem item : cartItems) {
+                    Map<String, String> productMap = Map.of(
+                            "Image", item.getProduct().getImageUrl(),
+                            "productName", item.getProduct().getProductName(),
+                            "Quantity", String.valueOf(item.getQuantity()),
+                            "Price", String.valueOf(item.getPrice())
                     );
                     productList.add(productMap);
                 }
 
-                // Final mail data with products list
+                // Final mail data with a product list
                 Map<String, Object> mailData = new HashMap<>();
                 mailData.put("UserName", user.getFirstName() + " " + user.getLastName());
                 mailData.put("email", user.getEmail());

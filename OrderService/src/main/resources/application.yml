@@ -16,9 +16,10 @@ spring :
   mail:
     host: smtp.gmail.com
     port: 587  # Use 465 for SSL
-    username: armanhaba27@gmail.com
-    password: vugb fxka wqyz mubk
-#    qkgc lebw bzpr naxj
+    username: habaarman516@gmail.com
+    password: qkgc lebw bzpr naxj
+#
+#    vugb fxka wqyz mubk
     properties:
       mail:
         smtp:

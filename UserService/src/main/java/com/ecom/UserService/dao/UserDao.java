@@ -1,15 +1,16 @@
 package com.ecom.UserService.dao;
 
 import com.ecom.CommonEntity.Enum.Status;
-import com.ecom.CommonEntity.dtos.AddressFeedDto;
+import com.ecom.CommonEntity.dtos.AddressResponseDto;
+import com.ecom.CommonEntity.entities.Address;
 import com.ecom.CommonEntity.entities.Users;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Optional;
+
 
 @Getter
 @Setter
@@ -29,20 +30,24 @@ public class UserDao {
         return masterDao.getUserRepo().findById(userId);
     }
 
-    public Optional<Users> findUserByIdAndStatus(Long userId, Status status){
+    public Optional<Users> findUserByIdAndStatus(Long userId, Status status) {
         return masterDao.getUserRepo().findByUserIdAndStatus(userId, status);
     }
 
-    public Optional<Users> findUserByMobileAndStatus(String mobile, Status status){
+    public Optional<Users> findUserByMobileAndStatus(String mobile, Status status) {
         return masterDao.getUserRepo().findByMobileAndStatus(mobile, status);
     }
 
-    public List<AddressFeedDto> findAllUsersWithStatus(Status status){
-        return masterDao.getUserRepo().findAllByUsersWithAddressAndStatus(status);
+    public List<AddressResponseDto> findAllUsersWithStatus(Status status) {
+        return masterDao.getAddressRepo().findAllByUsersWithAddressAndStatus(status);
     }
 
-    public Optional<Users> findUsersByMobile(String mobile){
+    public Optional<Users> findUsersByMobile(String mobile) {
         return masterDao.getUserRepo().findByMobile(mobile);
+    }
+
+    public Optional<Users> findByEmail(String email) {
+        return masterDao.getUserRepo().findByEmail(email);
     }
 
 }

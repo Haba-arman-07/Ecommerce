@@ -1,16 +1,14 @@
 package com.ecom.OrderService.controller;
 
 import com.ecom.CommonEntity.Enum.OrderStatus;
-import com.ecom.CommonEntity.dtos.OrdersDto;
 import com.ecom.CommonEntity.model.ResponseModel;
-import com.ecom.OrderService.services.OrderService;
+import com.ecom.OrderService.services.ServiceInterface.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/orders/")
 public class OrderController {
-
     @Autowired
     private OrderService orderService;
 
@@ -19,34 +17,33 @@ public class OrderController {
         return orderService.addOrder(userId,addressId);
     }
 
-    @GetMapping("{orderId}")
-    public ResponseModel getOrderByOrderId(@PathVariable Long orderId){
-        return orderService.getOrderByOrderId(orderId);
-    }
-
     @GetMapping
-    public ResponseModel getAllOrders(){
-        return orderService.getAllOrders();
+    public ResponseModel getAllOrder(){
+        return orderService.getAllOrder();
     }
 
-    @GetMapping("users/{userId}")
-    public ResponseModel getOrderByUserId(@PathVariable Long userId){
-        return orderService.getOrderByUserId(userId);
+    @GetMapping("user/{userId}")
+    public ResponseModel getUserOrder(@PathVariable Long userId){
+        return orderService.getUserOrder(userId);
     }
 
-    @PutMapping("{orderId}")
-    public ResponseModel cancelOrder(@PathVariable Long orderId){
-        return orderService.cancelOrder(orderId);
-    }
-
-    @PutMapping("return/{orderId}")
-    public ResponseModel returnOrder(@PathVariable Long orderId){
-        return orderService.returnOrder(orderId);
+    @GetMapping("{orderItemId}")
+    public ResponseModel getOrderItem(@PathVariable Long orderItemId){
+        return orderService.getOrderItem(orderItemId);
     }
 
     @PutMapping
     public ResponseModel updateOrder(@RequestParam Long orderId, @RequestParam OrderStatus orderStatus){
-        return orderService.updateOrder(orderId, orderStatus);
+        return orderService.updateOrder(orderId,orderStatus);
     }
 
+    @PutMapping("cancel/{orderItemId}")
+    public ResponseModel cancelOrder(@PathVariable Long orderItemId){
+        return orderService.cancelOrderItem(orderItemId);
+    }
+
+    @PutMapping("return/{orderItemId}")
+    public ResponseModel returnOrder(@PathVariable Long orderItemId){
+        return orderService.returnOrder(orderItemId);
+    }
 }

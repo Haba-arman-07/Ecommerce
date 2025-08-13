@@ -1,11 +1,12 @@
 package com.ecom.ProductService.Services.ServiceInterface;
 
+
 import com.ecom.CommonEntity.dtos.CartDto;
 import com.ecom.CommonEntity.model.ResponseModel;
 
+public interface CartItemService {
 
-public interface CartService {
-    ResponseModel addToCart(CartDto itemsDTO);
+    ResponseModel addToCart(CartDto cartDto);
 
     ResponseModel getCartByUserId(Long userId);
 

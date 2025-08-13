@@ -1,7 +1,7 @@
 package com.ecom.OrderService.dao;
 
 import com.ecom.OrderService.repository.*;
-import com.ecom.OrderService.utils.RabbitMQProducer;
+import com.ecom.OrderService.repository.OrderRepository;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,10 +14,16 @@ public class MasterDao {
     private OrderRepository orderRepo;
 
     @Autowired
+    private OrderItemRepository orderItemRepo;
+
+    @Autowired
     private UserRepository userRepo;
 
     @Autowired
     private CartRepository cartRepo;
+
+    @Autowired
+    private CartItemsRepository cartItemsRepo;
 
     @Autowired
     private ProductRepository productRepo;

@@ -13,11 +13,6 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/")
-    public ResponseModel addUser(@RequestBody UserDto userDto){
-        return userService.addUser(userDto);
-    }
-
     @GetMapping("/")
     public ResponseModel getAllUsers(){
 

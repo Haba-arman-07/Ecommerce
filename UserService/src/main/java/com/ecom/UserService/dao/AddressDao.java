@@ -1,8 +1,6 @@
 package com.ecom.UserService.dao;
 
 import com.ecom.CommonEntity.Enum.Status;
-import com.ecom.CommonEntity.dtos.AddressDto;
-import com.ecom.CommonEntity.dtos.AddressFeedDto;
 import com.ecom.CommonEntity.entities.Address;
 import lombok.Getter;
 import lombok.Setter;

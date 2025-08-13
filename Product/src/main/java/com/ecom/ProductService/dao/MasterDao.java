@@ -1,9 +1,6 @@
 package com.ecom.ProductService.dao;
 
-import com.ecom.ProductService.Repository.CartRepository;
-import com.ecom.ProductService.Repository.CategoryRepository;
-import com.ecom.ProductService.Repository.ProductRepository;
-import com.ecom.ProductService.Repository.UserRepository;
+import com.ecom.ProductService.Repository.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +21,10 @@ public class MasterDao {
     private UserRepository userRepo;
 
     @Autowired
+    private CartItemsRepository cartItemsRepo;
+
+    @Autowired
     private CartRepository cartRepo;
+
 
 }

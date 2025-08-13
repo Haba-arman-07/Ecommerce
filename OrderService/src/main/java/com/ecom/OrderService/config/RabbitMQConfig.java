@@ -22,8 +22,12 @@ public class RabbitMQConfig {
     public static final String ROUTING_KEY_CART_REMINDER = "cart.reminder.key";
     public static final String QUEUE_CART_REMINDER = "cart.reminder.queue";
 
+    //Order Cancel Mail
+    public static final String ROUTING_KEY_ORDER_CANCEL_MAIL = "order.cancel.mail";
+    public static final String QUEUE_ORDER_CANCEL_MAIL = "order.cancel.queue";
 
-    // Order Bean
+
+    // Order Bean common all
     @Bean(name = "orderMailExchange")
     public DirectExchange orderMailExchange() {
         return new DirectExchange(ORDER_MAIL_EXCHANGE);
@@ -37,10 +41,11 @@ public class RabbitMQConfig {
     @Bean
     public Binding orderMailBinding(
             @Qualifier("orderMailQueue") Queue Queue,
-            @Qualifier("orderMailExchange") DirectExchange Exchange) {
+            @Qualifier("orderMailExchange") DirectExchange exchange) {
         return BindingBuilder.bind(Queue)
-                .to(Exchange)
+                .to(exchange)
                 .with(ROUTING_KEY_ORDER_MAIL);
+
     }
 
 
@@ -53,10 +58,25 @@ public class RabbitMQConfig {
     @Bean
     public Binding cartBinding(
             @Qualifier("cartReminderQueue") Queue Queue,
-            @Qualifier("orderMailExchange") DirectExchange Exchange) {
+            @Qualifier("orderMailExchange") DirectExchange exchange) {
         return BindingBuilder.bind(Queue)
-                .to(Exchange)
+                .to(exchange)
                 .with(ROUTING_KEY_CART_REMINDER);
     }
 
+
+    //Order Cancel Bean
+    @Bean(name = "orderCancelQueue")
+    public Queue orderCancelQueue(){
+        return new Queue(QUEUE_ORDER_CANCEL_MAIL, false);
+    }
+
+    @Bean
+    public Binding orderCancelBinding(
+            @Qualifier("orderCancelQueue") Queue queue,
+            @Qualifier("orderMailExchange") DirectExchange exchange){
+        return BindingBuilder.bind(queue)
+                .to(exchange)
+                .with(ROUTING_KEY_ORDER_CANCEL_MAIL);
+    }
 }

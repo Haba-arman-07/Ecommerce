@@ -2,7 +2,7 @@ package com.ecom.UserService.Services.IMPL;
 
 import com.ecom.CommonEntity.Enum.Status;
 import com.ecom.CommonEntity.dtos.AddressDto;
-import com.ecom.CommonEntity.dtos.AddressFeedDto;
+import com.ecom.CommonEntity.dtos.AddressResponseDto;
 import com.ecom.CommonEntity.entities.*;
 import com.ecom.CommonEntity.model.ResponseModel;
 import com.ecom.UserService.Services.ServiceInterface.AddressService;
@@ -73,9 +73,9 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public ResponseModel getAddress(Long userId) {
         try {
-            List<AddressFeedDto> address = addressDao.findUserByIdAndStatus(userId,Status.ACTIVE)
+            List<AddressResponseDto> address = addressDao.findUserByIdAndStatus(userId,Status.ACTIVE)
                     .stream()
-                    .map(AddressFeedDto::response)
+                    .map(AddressResponseDto::response)
                     .toList();
 
             if (address.isEmpty())
@@ -105,8 +105,8 @@ public class AddressServiceImpl implements AddressService {
     public ResponseModel getAllAddress() {
         try {
 
-            List<AddressFeedDto> existUsers = addressDao.findAllAddress().stream()
-                    .map(AddressFeedDto::response)
+            List<AddressResponseDto> existUsers = addressDao.findAllAddress().stream()
+                    .map(AddressResponseDto::response)
                     .toList();
 
             return new ResponseModel(
@@ -153,7 +153,7 @@ public class AddressServiceImpl implements AddressService {
 
             return new ResponseModel(
                     HttpStatus.OK,
-                    AddressFeedDto.response(saveAddress),
+                    AddressResponseDto.response(saveAddress),
                     "Address Update Successfully"
             );
 

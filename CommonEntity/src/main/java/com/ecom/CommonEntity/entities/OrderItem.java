@@ -1,47 +1,39 @@
 package com.ecom.CommonEntity.entities;
 
 import com.ecom.CommonEntity.Enum.OrderStatus;
-import com.ecom.CommonEntity.Enum.Status;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-public class Orders {
+public class OrderItem {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long orderId;
+    private Long orderItemId;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "userId", nullable = false)
-    private Users user;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "orderId", nullable = false)
+    private Orders orders;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "addressId", nullable = false)
-    private Address address;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "productId", nullable = false)
+    private Product product;
 
-    @OneToMany(mappedBy = "orders", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<OrderItem> orderItems;
+    private int quantity;
 
-    private Double totalAmount;
+    private Double price;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
-    @Enumerated(EnumType.STRING)
-    private Status status;
-
     private LocalDateTime createdAt;
-
     private LocalDateTime updatedAt;
 
     @PrePersist
@@ -54,5 +46,4 @@ public class Orders {
     public void updateValue(){
         this.updatedAt = LocalDateTime.now();
     }
-
 }

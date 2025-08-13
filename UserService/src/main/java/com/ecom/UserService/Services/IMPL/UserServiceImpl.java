@@ -1,7 +1,7 @@
 package com.ecom.UserService.Services.IMPL;
 
 import com.ecom.CommonEntity.Enum.Status;
-import com.ecom.CommonEntity.dtos.AddressFeedDto;
+import com.ecom.CommonEntity.dtos.AddressResponseDto;
 import com.ecom.CommonEntity.dtos.UserDto;
 import com.ecom.CommonEntity.entities.Users;
 import com.ecom.CommonEntity.model.ResponseModel;
@@ -10,11 +10,12 @@ import com.ecom.UserService.dao.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -22,59 +23,29 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserDao userDao;
 
-    @Override
-    public ResponseModel addUser(UserDto userDto) {
-        try {
-            Optional<Users> existMobile = userDao.findUserByMobileAndStatus(userDto.getMobile(), Status.ACTIVE);
-            if (existMobile.isPresent()) {
-                return new ResponseModel(
-                        HttpStatus.BAD_REQUEST,
-                        null,
-                        "Mobile Already Exist");
-            }
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-            Users user = UserDto.toEntity(userDto);
-            Users saveUser = userDao.saveUsers(user);
-
-            return new ResponseModel(
-                    HttpStatus.OK,
-                    UserDto.toDto(saveUser),
-                    "User Add Successfully");
-
-        } catch (DataIntegrityViolationException e) {
-            return new ResponseModel(
-                    HttpStatus.CONFLICT,
-                    null,
-                    "Email Already Exist");
-        } catch (Exception e) {
-            return new ResponseModel(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    null,
-                    "Something Went Wrong");
-        }
-    }
 
     @Override
     public ResponseModel getAllUsers() {
         try {
-            List<AddressFeedDto> users = userDao.findAllUsersWithStatus(Status.ACTIVE);
-//            List<UserDto> userDtos = users.stream()
-//                    .map(UserDto::toDto)
-//                    .toList();
+            List<AddressResponseDto> users = userDao.findAllUsersWithStatus(Status.ACTIVE);
 
             return new ResponseModel(
                     HttpStatus.OK,
                     users,
-                    "SUCCESS");
+                    "SUCCESS"
+            );
 
         } catch (Exception e) {
             return new ResponseModel(
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     null,
-                    "Failed to fetch users");
+                    "Failed to fetch users: " + e.getMessage()
+            );
         }
     }
-
 
     @Override
     public ResponseModel getUser(Long userId) {
@@ -82,11 +53,9 @@ public class UserServiceImpl implements UserService {
             Optional<Users> findUser = userDao.findUserByIdAndStatus(userId, Status.ACTIVE);
 
             if (findUser.isPresent()) {
-                Users user = findUser.get();
-
                 return new ResponseModel(
                         HttpStatus.OK,
-                        UserDto.toDto(user),
+                        UserDto.toDto(findUser.get()),
                         "SUCCESS"
                 );
             }
@@ -95,101 +64,112 @@ public class UserServiceImpl implements UserService {
                     null,
                     "User Not Found"
             );
+
         } catch (Exception e) {
             return new ResponseModel(
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     null,
-                    "Failed to fetch user");
+                    "Failed to fetch user: " + e.getMessage()
+            );
         }
     }
 
     @Override
     public ResponseModel updateUser(UserDto userDto) {
         try {
-            Optional<Users> existUser = userDao.findUserByIdAndStatus(userDto.getUserId(), Status.ACTIVE);
+            Optional<Users> existUserOpt = userDao.findUserByIdAndStatus(
+                    userDto.getUserId(), Status.ACTIVE);
 
-            if (existUser.isPresent()) {
-                Optional<Users> existMobile = userDao.findUsersByMobile(userDto.getMobile());
-
-                if (existMobile.isEmpty()) {
-                    Users user = existUser.get();
-                    user.setFirstName(userDto.getFirstName());
-                    user.setLastName(userDto.getLastName());
-                    user.setEmail(userDto.getEmail());
-                    user.setPassword(userDto.getPassword());
-                    user.setMobile(userDto.getMobile());
-                    user.setGender(user.getGender());
-                    user.setUpdatedAt(LocalDateTime.now());
-
-                    Users updateUser = userDao.saveUsers(user);;
-
-                    return new ResponseModel(
-                            HttpStatus.OK,
-                            UserDto.toDto(updateUser),
-                            "Data Updated Successfully"
-                    );
-                } else {
-                    return new ResponseModel(
-                            HttpStatus.BAD_REQUEST,
-                            null,
-                            "Mobile Already Exist");
-                }
+            if (existUserOpt.isEmpty()) {
+                return new ResponseModel(
+                        HttpStatus.NOT_MODIFIED,
+                        null,
+                        "Please Enter Correct UserId And Status-(Active)"
+                );
             }
+
+            Users existUser = existUserOpt.get();
+
+            // Mobile number check (excluding self)
+            Optional<Users> existMobile = userDao.findUsersByMobile(userDto.getMobile());
+            if (existMobile.isPresent() && !existMobile.get().getUserId().equals(userDto.getUserId())) {
+
+                return new ResponseModel(
+                        HttpStatus.BAD_REQUEST,
+                        null,
+                        "Mobile Already Exist"
+                );
+            }
+
+            // Update details
+            existUser.setFirstName(userDto.getFirstName());
+            existUser.setLastName(userDto.getLastName());
+            existUser.setEmail(userDto.getEmail());
+            existUser.setMobile(userDto.getMobile());
+            existUser.setGender(userDto.getGender());
+            existUser.setUpdatedAt(LocalDateTime.now());
+
+            // Encode password if changed
+            if (userDto.getPassword() != null && !userDto.getPassword().isBlank()) {
+                existUser.setPassword(passwordEncoder.encode(userDto.getPassword()));
+            }
+
+            Users updatedUser = userDao.saveUsers(existUser);
+
             return new ResponseModel(
-                    HttpStatus.NOT_MODIFIED,
-                    null,
-                    "Please Entered Correct UserId And Status-(Active)"
+                    HttpStatus.OK,
+                    UserDto.toDto(updatedUser),
+                    "Data Updated Successfully"
             );
+
         } catch (Exception e) {
             return new ResponseModel(
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     null,
-                    "User Updation Failed");
+                    "User Updation Failed: " + e.getMessage()
+            );
         }
     }
 
     @Override
     public ResponseModel blockUser(Long userId) {
         try {
-            Optional<Users> existUser = userDao.findUserById(userId);
+            Optional<Users> existUserOpt = userDao.findUserById(userId);
 
-            if (existUser.isPresent()) {
-                Users user = existUser.get();
-
-                if (user.getStatus() == Status.ACTIVE) {
-                    user.setStatus(Status.INACTIVE);
-
-                    userDao.saveUsers(user);
-
-                    return new ResponseModel(
-                            HttpStatus.OK,
-                            null,
-                            "Account Deleted Successfully"
-                    );
-
-                } else {
-                    user.setStatus(Status.ACTIVE);
-
-                    userDao.saveUsers(user);
-
-                    return new ResponseModel(
-                            HttpStatus.OK,
-                            null,
-                            "Account Recover Success"
-                    );
-                }
+            if (existUserOpt.isEmpty()) {
+                return new ResponseModel(
+                        HttpStatus.BAD_REQUEST,
+                        null,
+                        "Please Enter Valid userId"
+                );
             }
-            return new ResponseModel(
-                    HttpStatus.BAD_REQUEST,
-                    null,
-                    "Please Entered Valid userId"
-            );
+
+            Users user = existUserOpt.get();
+
+            if (user.getStatus() == Status.ACTIVE) {
+                user.setStatus(Status.INACTIVE);
+                userDao.saveUsers(user);
+                return new ResponseModel(
+                        HttpStatus.OK,
+                        null,
+                        "Account Deleted Successfully"
+                );
+            } else {
+                user.setStatus(Status.ACTIVE);
+                userDao.saveUsers(user);
+                return new ResponseModel(
+                        HttpStatus.OK,
+                        null,
+                        "Account Recovered Successfully"
+                );
+            }
+
         } catch (Exception e) {
             return new ResponseModel(
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     null,
-                    "Failed Block/Unblock User");
+                    "Failed Block/Unblock User: " + e.getMessage()
+            );
         }
     }
-
 }

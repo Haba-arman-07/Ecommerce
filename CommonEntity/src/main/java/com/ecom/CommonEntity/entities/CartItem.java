@@ -1,10 +1,9 @@
 package com.ecom.CommonEntity.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
-import java.util.List;
+
 
 @Builder
 @AllArgsConstructor
@@ -12,34 +11,37 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-public class Cart {
+public class CartItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long cartId;
-
-    public Double totalAmount = 0.0;
+    private Long cartItemsId;
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
-    private Users user;
+    @JoinColumn(name = "cartId", nullable = false)
+    private Cart cart;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "cart", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<CartItem> cartItems;
+    @ManyToOne
+    @JoinColumn(name = "productId", nullable = false)
+    private Product product;
+
+    private Double price;
+
+    private int quantity;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     @PrePersist
-    public void onCreate() {
+    public void setValue(){
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
 
     @PreUpdate
-    public void onUpdate() {
+    public void updateValue(){
         this.updatedAt = LocalDateTime.now();
     }
 
 }
+
