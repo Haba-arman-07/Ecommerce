@@ -41,7 +41,7 @@ public class AuthServiceImpl implements AuthService {
                     userDto.getMobile(), Status.ACTIVE);
 
             // Check email already exist
-            Optional<Users> existEmail = userDao.findByEmail(userDto.getEmail());
+            Optional<Users> existEmail = userDao.findByEmail(userDto.getEmail(), Status.ACTIVE);
 
             if (existMobile.isPresent()) {
                 return new ResponseModel(

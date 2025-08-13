@@ -46,8 +46,8 @@ public class UserDao {
         return masterDao.getUserRepo().findByMobile(mobile);
     }
 
-    public Optional<Users> findByEmail(String email) {
-        return masterDao.getUserRepo().findByEmail(email);
+    public Optional<Users> findByEmail(String email, Status status) {
+        return masterDao.getUserRepo().findByEmail(email, status);
     }
 
 }

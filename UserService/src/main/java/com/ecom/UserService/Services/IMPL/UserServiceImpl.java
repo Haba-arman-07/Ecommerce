@@ -8,7 +8,6 @@ import com.ecom.CommonEntity.model.ResponseModel;
 import com.ecom.UserService.Services.ServiceInterface.UserService;
 import com.ecom.UserService.dao.UserDao;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -52,7 +51,7 @@ public class UserServiceImpl implements UserService {
     public ResponseModel getUser() {
         try {
             String email = SecurityContextHolder.getContext().getAuthentication().getName();
-            Optional<Users> findUser = userDao.findByEmail(email);
+            Optional<Users> findUser = userDao.findByEmail(email, Status.ACTIVE);
 
             if (findUser.isPresent()) {
                 return new ResponseModel(
@@ -137,7 +136,7 @@ public class UserServiceImpl implements UserService {
     public ResponseModel blockUser() {
         try {
             String email = SecurityContextHolder.getContext().getAuthentication().getName();
-            Optional<Users> existUserOpt = userDao.findByEmail(email);
+            Optional<Users> existUserOpt = userDao.findByEmail(email, Status.ACTIVE);
 
             if (existUserOpt.isEmpty()) {
                 return new ResponseModel(
