@@ -7,8 +7,6 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-//@AllArgsConstructor
-//@NoArgsConstructor
 public class AddressResponseDto {
 
     private Long addressId;
@@ -27,24 +25,24 @@ public class AddressResponseDto {
     private Status status;
 
 
-//    public static AddressResponseDto response(Address address){
-//        return AddressResponseDto.builder()
-//                .addressId(address.getAddressId())
-//                .userId(address.getUser().getUserId())
-////                .userName(address.getUser().getFirstName() + " " + address.getUser().getLastName())
-//                .firstName(address.getUser().getFirstName())
-//                .lastName(address.getUser().getLastName())
-//                .mobile(address.getUser().getMobile())
-//                .email(address.getUser().getEmail())
-//                .password(address.getUser().getPassword())
-//                .location(address.getLocation())
-//                .zipCode(address.getZipCode())
-//                .countryName(address.getCountry().getCountryName())
-//                .stateName(address.getState().getStateName())
-//                .cityName(address.getCity().getCityName())
-//                .status(address.getStatus())
-//                .build();
-//    }
+    public static AddressResponseDto response(Address address){
+        return AddressResponseDto.builder()
+                .addressId(address.getAddressId())
+                .userId(address.getUser().getUserId())
+//                .userName(address.getUser().getFirstName() + " " + address.getUser().getLastName())
+                .firstName(address.getUser().getFirstName())
+                .lastName(address.getUser().getLastName())
+                .mobile(address.getUser().getMobile())
+                .email(address.getUser().getEmail())
+                .password(address.getUser().getPassword())
+                .location(address.getLocation())
+                .zipCode(address.getZipCode())
+                .countryName(address.getCountry().getCountryName())
+                .stateName(address.getState().getStateName())
+                .cityName(address.getCity().getCityName())
+                .status(address.getStatus())
+                .build();
+    }
 
 
     public AddressResponseDto(Long addressId, Long userId, String firstName, String lastName,

@@ -9,9 +9,9 @@ public interface UserService {
 
 //    ResponseModel addUser(UserDto userDto);
     ResponseModel getAllUsers();
-    ResponseModel getUser(Long userId);
+    ResponseModel getUser();
     ResponseModel updateUser(UserDto userDto);
-    ResponseModel blockUser(Long userId);
+    ResponseModel blockUser();
 
 
 //    ResponseModel findAddress();

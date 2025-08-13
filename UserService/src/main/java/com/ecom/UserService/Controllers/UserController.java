@@ -20,9 +20,8 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseModel getUser(@PathVariable Long userId){
-
-        return userService.getUser(userId);
+    public ResponseModel getUser(){
+        return userService.getUser();
     }
 
     @PutMapping("/")
@@ -31,8 +30,8 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    public ResponseModel blockUser(@PathVariable Long userId){
-        return userService.blockUser(userId);
+    public ResponseModel blockUser(){
+        return userService.blockUser();
     }
 
 }
