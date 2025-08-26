@@ -4,9 +4,11 @@ import com.ecom.CommonEntity.Enum.Status;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
-public class ProductFeedDto {
+public class ProductFeedDto implements Serializable {
     private long productId;
     private String productName;
     private String imageUrl;

@@ -12,5 +12,11 @@ spring:
     hibernate:
       ddl-auto: update
 
+  cache:
+    type: redis # Specifies the caching provider, e.g., 'redis', 'ehcache', 'caffeine', 'none'
+    redis: # Specific properties for Redis cache
+      cache-null-values: false
+      time-to-live: 60s # Default time-to-live for cache entries in seconds
+
 server:
   port: 8082

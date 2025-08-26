@@ -4,12 +4,14 @@ import com.ecom.CommonEntity.Enum.Status;
 import com.ecom.CommonEntity.entities.*;
 import lombok.*;
 
+import java.io.Serializable;
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class AddressDto {
+public class AddressDto implements Serializable {
 
     private Long addressId;
 

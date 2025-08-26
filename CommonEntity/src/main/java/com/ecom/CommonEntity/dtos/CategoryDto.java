@@ -4,12 +4,14 @@ import com.ecom.CommonEntity.entities.Category;
 import com.ecom.CommonEntity.Enum.Status;
 import lombok.*;
 
+import java.io.Serializable;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class CategoryDto {
+public class CategoryDto implements Serializable {
 
     private long categoryId;
     private String categoryName;

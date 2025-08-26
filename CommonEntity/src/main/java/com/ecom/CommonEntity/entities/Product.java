@@ -30,7 +30,8 @@ public class Product {
 //    private Users user;
 
     private Double price;
-    private int qty;
+
+    private int qty = 0;
     private String imageUrl;
     private int taxRate;
 

@@ -7,28 +7,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/address/")
+@RequestMapping("/api/v1/users/address")
 public class AddressController {
 
     @Autowired
     private AddressService addressService;
 
-    @PostMapping
+    @PostMapping("/")
     public ResponseModel addAddress(@RequestBody AddressDto addressDto){
         return addressService.addAddress(addressDto);
     }
 
-    @GetMapping("{addressId}")
+    @GetMapping("/{addressId}")
     public ResponseModel getAddress(@PathVariable Long addressId){
         return addressService.getAddress(addressId);
     }
 
-    @GetMapping
+    @GetMapping("/")
     public ResponseModel getAllAddress(){
         return addressService.getAllAddress();
     }
 
-    @PutMapping
+    @PutMapping("/")
     public ResponseModel updateAddress(@RequestBody AddressDto addressDto){
         return addressService.updateAddress(addressDto);
     }
@@ -39,19 +39,19 @@ public class AddressController {
     }
 
     //Get All Country
-    @GetMapping("Country/")
+    @GetMapping("/Country")
     public ResponseModel getAllCountry(){
         return addressService.getAllCountry();
     }
 
     //Get All State
-    @GetMapping("State/")
+    @GetMapping("/State")
     public ResponseModel getAllState(){
         return addressService.getAllState();
     }
 
     //Get All City
-    @GetMapping("City/")
+    @GetMapping("/City")
     public ResponseModel getAllCity(){
         return addressService.getAllCity();
     }

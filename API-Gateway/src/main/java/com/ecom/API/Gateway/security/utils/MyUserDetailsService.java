@@ -1,0 +1,30 @@
+package com.ecom.API.Gateway.security.utils;
+
+import com.ecom.CommonEntity.Enum.Status;
+import com.ecom.CommonEntity.entities.Users;
+import com.ecom.commonRepo.dao.UserDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Component;
+
+
+@Component
+public class MyUserDetailsService implements UserDetailsService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+
+            Users users = userDao.findUsersByEmailAndStatus(email, Status.ACTIVE).orElseThrow(() ->
+                    new IllegalArgumentException("User Email Not Found " + email)
+
+            );
+//        System.out.println("Hello ");
+
+        return new UserPrincipal(users);
+    }
+}

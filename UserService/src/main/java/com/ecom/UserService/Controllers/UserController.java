@@ -7,31 +7,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/v1/users")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @GetMapping("/")
+    @GetMapping("/getAll")
     public ResponseModel getAllUsers(){
 
         return userService.getAllUsers();
     }
 
-    @GetMapping("/{userId}")
-    public ResponseModel getUser(){
-        return userService.getUser();
+    @GetMapping("/get")
+    public ResponseModel getUser(@PathVariable Long userId){
+        return userService.getUser(userId);
     }
 
-    @PutMapping("/")
+    @PutMapping("/update")
     public ResponseModel updateUser(@RequestBody UserDto userDto){
         return userService.updateUser(userDto);
     }
 
-    @PatchMapping("/{userId}")
-    public ResponseModel blockUser(){
-        return userService.blockUser();
+    @PatchMapping("/block")
+    public ResponseModel blockUser(@PathVariable Long userId){
+        return userService.blockUser(userId);
     }
 
 }

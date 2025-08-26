@@ -4,10 +4,12 @@ import com.ecom.CommonEntity.Enum.Status;
 import com.ecom.CommonEntity.entities.Address;
 import lombok.*;
 
+import java.io.Serializable;
+
 @Getter
 @Setter
 @Builder
-public class AddressResponseDto {
+public class AddressResponseDto implements Serializable {
 
     private Long addressId;
     private Long userId;

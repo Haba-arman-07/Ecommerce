@@ -4,13 +4,15 @@ import com.ecom.CommonEntity.Enum.Status;
 import com.ecom.CommonEntity.entities.Product;
 import lombok.*;
 
+import java.io.Serializable;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 
-public class ProductDto {
+public class ProductDto implements Serializable {
 
     private Long productId;
     private String productName;

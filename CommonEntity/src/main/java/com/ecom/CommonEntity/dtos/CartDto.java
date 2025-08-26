@@ -3,6 +3,8 @@ package com.ecom.CommonEntity.dtos;
 import com.ecom.CommonEntity.entities.Cart;
 import com.ecom.CommonEntity.entities.Users;
 import lombok.*;
+
+import java.io.Serializable;
 import java.util.List;
 
 @Builder
@@ -10,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class CartDto {
+public class CartDto implements Serializable {
 
     private Long cartId;
 

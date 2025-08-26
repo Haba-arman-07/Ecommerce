@@ -5,7 +5,7 @@ import com.ecom.CommonEntity.entities.Cart;
 import com.ecom.CommonEntity.entities.CartItem;
 import com.ecom.CommonEntity.entities.Users;
 import com.ecom.OrderService.config.RabbitMQConfig;
-import com.ecom.OrderService.dao.MasterDao;
+import com.ecom.commonRepo.dao.MasterDao;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -44,6 +44,7 @@ public class Users {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

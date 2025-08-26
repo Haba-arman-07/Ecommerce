@@ -2,9 +2,13 @@ package com.ecom.CommonEntity.dtos;
 
 import com.ecom.CommonEntity.Enum.OrderStatus;
 import com.ecom.CommonEntity.Enum.Status;
+import com.ecom.CommonEntity.entities.CartItem;
 import com.ecom.CommonEntity.entities.OrderItem;
+import com.ecom.CommonEntity.entities.Orders;
+import com.ecom.CommonEntity.entities.Product;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Builder
@@ -12,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-public class OrderResponseDto {
+public class OrderResponseDto implements Serializable {
     private Long orderId;
 
     private Long userId;
@@ -56,6 +60,15 @@ public class OrderResponseDto {
     private LocalDateTime updatedAt;
 
 //    private List<OrderItem> orderItems;
+    public static OrderItem toEntity(Orders orders, CartItem item, Product product){
+        return OrderItem.builder()
+                .orders(orders)
+                .product(product)
+                .quantity(item.getQuantity())
+                .orderStatus(OrderStatus.PENDING)
+                .price(item.getPrice())
+                .build();
+    }
 
     public static OrderResponseDto responseDto(OrderItem orderItem){
         return OrderResponseDto.builder()
@@ -70,14 +83,6 @@ public class OrderResponseDto {
                 .stateName(orderItem.getOrders().getAddress().getState().getStateName())
                 .cityName(orderItem.getOrders().getAddress().getCity().getCityName())
                 .totalAmount(orderItem.getOrders().getTotalAmount())
-//                .orderItems(orderItem.stream()
-//                        .map(item -> OrderItem.builder()
-//                                .orderItemId(item.getOrderItemId())
-//                                .product(item.getProduct())
-//                                .quantity(item.getQuantity())
-//                                .price(item.getPrice())
-//                                .build())
-//                        .toList())
                 .orderItemId(orderItem.getOrderItemId())
                 .productId(orderItem.getProduct().getProductId())
                 .productName(orderItem.getProduct().getProductName())

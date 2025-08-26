@@ -31,9 +31,17 @@
 	</properties>
 	<dependencies>
 
+<!--		commonEntity Dependency-->
 		<dependency>
 			<groupId>com.ecom</groupId>
 			<artifactId>commonEntity</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+
+		<!--		commonRepo Dependency-->
+		<dependency>
+			<groupId>com.ecom</groupId>
+			<artifactId>commonRepo</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 

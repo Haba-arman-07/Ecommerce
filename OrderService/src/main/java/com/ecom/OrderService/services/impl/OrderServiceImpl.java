@@ -6,16 +6,15 @@ import com.ecom.CommonEntity.dtos.OrderResponseDto;
 import com.ecom.CommonEntity.entities.*;
 import com.ecom.CommonEntity.model.ResponseModel;
 import com.ecom.OrderService.config.RabbitMQConfig;
-import com.ecom.OrderService.dao.MasterDao;
-import com.ecom.OrderService.dao.OrderDao;
 import com.ecom.OrderService.services.ServiceInterface.OrderService;
 import com.ecom.OrderService.utils.*;
+import com.ecom.commonRepo.dao.MasterDao;
+import com.ecom.commonRepo.dao.OrderDao;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -76,6 +75,7 @@ public class OrderServiceImpl implements OrderService {
                     .build();
 
             orderDao.saveOrder(orders);
+            System.out.println(orders);
 
             List<OrderItem> itemList = new ArrayList<>();
             for (CartItem item : cartItems) {
@@ -87,12 +87,7 @@ public class OrderServiceImpl implements OrderService {
                     product.setQty(quantity);
                     masterDao.getProductRepo().save(product);
 
-                    OrderItem orderItem = OrderItem.builder()
-                            .orders(orders)
-                            .product(product)
-                            .quantity(item.getQuantity())
-                            .price(item.getPrice())
-                            .build();
+                    OrderItem orderItem = OrderResponseDto.toEntity(orders,item,product);
 
                     itemList.add(orderItem);
                 }

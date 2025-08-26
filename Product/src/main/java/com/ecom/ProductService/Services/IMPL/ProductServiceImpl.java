@@ -7,9 +7,12 @@ import com.ecom.CommonEntity.entities.Category;
 import com.ecom.CommonEntity.entities.Product;
 import com.ecom.CommonEntity.model.ResponseModel;
 import com.ecom.ProductService.Services.ServiceInterface.ProductService;
-import com.ecom.ProductService.dao.CategoryDao;
-import com.ecom.ProductService.dao.ProductDao;
+import com.ecom.commonRepo.dao.CategoryDao;
+import com.ecom.commonRepo.dao.ProductDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +32,7 @@ public class ProductServiceImpl implements ProductService {
     private CategoryDao categoryDao;
 
     @Override
+    @CacheEvict(value = {"getAllProduct","getProduct"}, allEntries = true)
     public ResponseModel addProduct(ProductDto productDto) {
 //        List<Product> existProduct = productRepo.findAll();
         Optional<Category> exist = categoryDao.findCategoryByIdAndStatus(
@@ -56,8 +60,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Cacheable(value = "getProduct", key = "#id")
     public ResponseModel getProduct(long id){
+
         Optional<Product> existProduct = productDao.findById(id);
+        System.out.println("Product Get In DB...");
 
         if (existProduct.isPresent()){
             Product product = existProduct.get();
@@ -77,10 +84,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Cacheable(value = "getAllProduct",key = "#page + '_' + #size")
     public ResponseModel getAllProduct(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<ProductFeedDto> products = productDao.getAllProducts(pageable);
 //        List<Product> products = masterDao.getProductRepo().findAllByStatus(Status.ACTIVE);
+        System.out.println("All Product Get In DB..");
 
         return new ResponseModel(
                 HttpStatus.OK,
@@ -90,6 +99,8 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @CachePut(value = "getProduct",key = "#productDto.productId")
+    @CacheEvict(value = "getAllProduct", allEntries = true)
     public ResponseModel updateProduct(ProductDto productDto){
         Optional<Product> existProduct = productDao.findProductByIdAndStatus(
                 productDto.getProductId(), Status.ACTIVE);
@@ -131,6 +142,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
     @Override
+    @CacheEvict(value = {"getProduct","getAllProduct"}, allEntries = true)
     public ResponseModel blockProduct(long id) {
         Optional<Product> existProduct = productDao.findProductByIdAndStatus(id,Status.ACTIVE);
 

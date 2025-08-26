@@ -6,13 +6,15 @@ import com.ecom.CommonEntity.entities.Product;
 import com.ecom.CommonEntity.entities.CartItem;
 import lombok.*;
 
+import java.io.Serializable;
+
 
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class CartItemsDto {
+public class CartItemsDto implements Serializable {
 
     private Long cartItemId;
     private Long cartId;

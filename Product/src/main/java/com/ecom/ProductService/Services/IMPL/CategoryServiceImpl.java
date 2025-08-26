@@ -5,7 +5,7 @@ import com.ecom.CommonEntity.dtos.CategoryDto;
 import com.ecom.CommonEntity.entities.Category;
 import com.ecom.CommonEntity.model.ResponseModel;
 import com.ecom.ProductService.Services.ServiceInterface.CategoryService;
-import com.ecom.ProductService.dao.CategoryDao;
+import com.ecom.commonRepo.dao.CategoryDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

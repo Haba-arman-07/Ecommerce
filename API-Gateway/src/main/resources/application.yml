@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: API Gateway
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/ecom
+    username: root
+    password: Arman@2004
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: UserService
+              uri: http://localhost:8083
+              predicates:
+                - Path=/api/v1/users/**
+
+            - id: Product
+              uri: http://localhost:8082
+              predicates:
+                - Path=/api/v1/product/**
+
+            - id: OrderService
+              uri: http://localhost:8084
+              predicates:
+                - Path=/api/v1/orders/**
+
+
+jwt:
+  secret: YXNkZnNqZGZrc2pkZmtsamZkc2tqZmRsa2Zqc2RmbGtqZg==
+
+server:
+  port: 8080

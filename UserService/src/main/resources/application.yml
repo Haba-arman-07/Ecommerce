@@ -12,8 +12,20 @@ spring:
     hibernate:
       ddl-auto: update
 
+  cache:
+    type: redis
+    redis:
+      time-to-live: 6000       # TTL = 60 seconds
+      cache-null-values: false
+
 jwt:
   secret: YXNkZnNqZGZrc2pkZmtsamZkc2tqZmRsa2Zqc2RmbGtqZg==
 
+#  logging:
+#    level:
+#      org.springframework.cache: TRACE
+
 server:
   port: 8083
+
+
