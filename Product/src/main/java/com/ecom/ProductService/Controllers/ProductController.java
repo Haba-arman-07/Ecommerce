@@ -38,6 +38,11 @@ public class ProductController {
         return productService.blockProduct(id);
     }
 
+    @GetMapping("/search")
+    public ResponseModel searchProducts(@RequestParam String keyword) {
+        return productService.searchProduct(keyword);
+    }
+
 //    @GetMapping("/show")
 //    public ResponseModel showProductDetail(){
 //        return productService.showProductDetail();

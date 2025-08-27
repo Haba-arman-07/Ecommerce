@@ -15,6 +15,8 @@ public interface ProductService {
 
     ResponseModel blockProduct(long id);
 
+    ResponseModel searchProduct(String keyword);
+
 //    ResponseModel showProductDetail();
 
 }

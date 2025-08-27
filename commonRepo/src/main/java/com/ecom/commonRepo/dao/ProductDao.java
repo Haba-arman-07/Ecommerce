@@ -8,8 +8,10 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Getter
@@ -34,6 +36,10 @@ public class ProductDao {
 
     public Page<ProductFeedDto> getAllProducts(Pageable pageable){
         return masterDao.getProductRepo().fetchAllProducts(pageable);
+    }
+
+    public List<Product> searchProducts(String keyword, Status status){
+        return masterDao.getProductRepo().searchProducts(keyword, status);
     }
 
 }

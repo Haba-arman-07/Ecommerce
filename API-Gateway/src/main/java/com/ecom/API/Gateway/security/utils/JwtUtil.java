@@ -9,7 +9,6 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-
 import javax.crypto.SecretKey;
 import java.util.Date;
 
@@ -20,13 +19,12 @@ public class JwtUtil {
     private String SECRET_KEY;
 
 
-    public String generateToken(String email){
+    public String generateToken(String email, String role){
         return Jwts.builder()
-                .claims()
+                .claim("role", role)
                 .subject(email)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 3))
-                .and()
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 3)) // 3 hours
                 .signWith(getKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -38,6 +36,11 @@ public class JwtUtil {
 
     public String extractUsername(String token) {
         return parseClaims(token).getSubject();
+    }
+
+    // add role
+    public String extractRole(String token) {
+        return parseClaims(token).get("role", String.class);
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {

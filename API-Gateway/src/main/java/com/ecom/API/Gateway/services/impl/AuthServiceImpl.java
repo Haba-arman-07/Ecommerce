@@ -1,7 +1,9 @@
 package com.ecom.API.Gateway.services.impl;
 
 import com.ecom.API.Gateway.security.utils.JwtUtil;
+import com.ecom.API.Gateway.security.utils.UserPrincipal;
 import com.ecom.API.Gateway.services.serviceInterface.AuthService;
+import com.ecom.CommonEntity.Enum.Role;
 import com.ecom.CommonEntity.Enum.Status;
 import com.ecom.CommonEntity.dtos.LoginDto;
 import com.ecom.CommonEntity.dtos.UserDto;
@@ -16,9 +18,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
 import java.util.Optional;
+
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -64,6 +65,12 @@ public class AuthServiceImpl implements AuthService {
             // Convert DTO to entity and encode password
             Users user = UserDto.toEntity(userDto);
             user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+            //add role
+                if (user.getRole() == null){
+                    user.setRole(Role.USER);
+                }
+
             Users saveUser = userDao.saveUsers(user);
 
             return new ResponseModel(
@@ -94,9 +101,16 @@ public class AuthServiceImpl implements AuthService {
                     new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
 
             if (authentication != null && authentication.isAuthenticated()) {
+
+//                UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+//                String role = userPrincipal.getUsers().getRole();
+
+                Optional<Users> users = userDao.findUsersByEmailAndStatus(loginDto.getEmail(), Status.ACTIVE);
+                String role = users.get().getRole().toString();
+
                 return new ResponseModel(
                         HttpStatus.OK,
-                        jwtUtil.generateToken(loginDto.getEmail()),
+                        jwtUtil.generateToken(loginDto.getEmail(), role),
                         "Login Successfully"
                 );
             }

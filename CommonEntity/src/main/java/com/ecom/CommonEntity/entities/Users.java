@@ -1,5 +1,6 @@
 package com.ecom.CommonEntity.entities;
 
+import com.ecom.CommonEntity.Enum.Role;
 import com.ecom.CommonEntity.Enum.Status;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -44,6 +45,8 @@ public class Users {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     private LocalDateTime createdAt;
 
@@ -52,6 +55,11 @@ public class Users {
     @PrePersist
     public void saveValue (){
         this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void updateValue() {
         this.updatedAt = LocalDateTime.now();
     }
 

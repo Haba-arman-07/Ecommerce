@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -164,6 +165,31 @@ public class ProductServiceImpl implements ProductService {
         );
 
     }
+
+
+    @Override
+    public ResponseModel searchProduct(String keyword) {
+        List<Product> products = productDao.searchProducts(keyword, Status.ACTIVE);
+
+        if (products.isEmpty()) {
+            return new ResponseModel(
+                    HttpStatus.NOT_FOUND,
+                    null,
+                    "No products found for keyword: " + keyword
+            );
+        }
+
+        List<ProductDto> result = products.stream()
+                .map(ProductDto::toDto)
+                .toList();
+
+        return new ResponseModel(
+                HttpStatus.OK,
+                result,
+                "SUCCESS"
+        );
+    }
+
 
 
 //    @Override
