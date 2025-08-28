@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +19,8 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -27,58 +31,45 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     private ApplicationContext context;
 
-    // Request Limit Code
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
+    // Request Limit Config
     private static final int MAX_REQUESTS = 5;
-    private static final long TIME_WINDOW_MS = 60_000;
-
-
-    private final Map<String, RequestInfo> requestMap = new ConcurrentHashMap<>();
+    private static final long TIME_WINDOW_SECONDS = 60; // 1 min
 
     private boolean isRequestAllowed(String ip) {
-        long now = Instant.now().toEpochMilli();
-        requestMap.putIfAbsent(ip, new RequestInfo(0, now));
+        String key = "req_limit:" + ip;
+        ValueOperations<String, String> ops = redisTemplate.opsForValue();
 
-        RequestInfo info = requestMap.get(ip);
+        Long count = ops.increment(key);
+//        System.out.println("count : "  + count);
 
-        // अगर 1 minute पूरा हो गया -> reset counter
-        if (now - info.startTime > TIME_WINDOW_MS) {
-            info.startTime = now;
-            info.count = 0;
+        if (count == 1) {
+            redisTemplate.expire(key, TIME_WINDOW_SECONDS, TimeUnit.SECONDS);
         }
 
-        info.count++;
-        return info.count <= MAX_REQUESTS;
+        return count <= MAX_REQUESTS;
     }
-
-    private static class RequestInfo {
-        int count;
-        long startTime;
-
-        RequestInfo(int count, long startTime) {
-            this.count = count;
-            this.startTime = startTime;
-        }
-    }
-    // --------------------------------------------------------
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
         String clientIp = request.getRemoteAddr();
+        String key = "req_limit:" + clientIp;
 
-        if (!requestMap.containsKey(clientIp)) {
+        if (!redisTemplate.hasKey(key)) {
             System.out.println("\nUser IP : " + clientIp + "\n");
         }
 
-        // ---- Rate Limit Check ----
         if (!isRequestAllowed(clientIp)) {
             response.setStatus(429);
-            response.getWriter().write("Too many requests! Please wait and try again.");
+            response.getWriter().write("Too many requests! Please wait and try After 1 min.");
             return;
         }
 
-        // ---- JWT Authentication ----
+        // ---- JWT Authentication Code----
         String authHeader = request.getHeader("Authorization");
         String token = null;
         String userName = null;
